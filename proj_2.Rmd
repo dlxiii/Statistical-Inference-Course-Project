@@ -1,0 +1,76 @@
+---
+title: 'Statistical Inference Course Project'
+date: '19/09/2021'
+author: 'Yulong Wang'
+output:
+  pdf_document: 
+    latex_engine: xelatex
+  html_document:
+    keep_md: yes
+---
+
+```{r Folder}
+setwd("/Users/yulong/GitHub/Statistical-Inference-Course-Project")
+```
+
+# Part 2: Basic Inferential Data Analysis Instructions
+
+## Instructions
+
+Now in the second portion of the project, we're going to analyze the ToothGrowth data in the R datasets package.
+
+* Load the ToothGrowth data and perform some basic exploratory data analyses
+
+* Provide a basic summary of the data.
+
+* Use confidence intervals and/or hypothesis tests to compare tooth growth by supp and dose. (Only use the techniques from class, even if there's other approaches worth considering)
+
+* State your conclusions and the assumptions needed for your conclusions.
+
+## 1. Load the ToothGrowth data and perform some basic exploratory data analyses 
+
+```{r}
+data("ToothGrowth")
+data <- as.data.frame(ToothGrowth)
+str(data)
+```
+
+## 2. Provide a basic summary of the data.
+
+```{r}
+head(data)
+summary(data)
+dose<-as.factor(data$dose)
+table(data$supp, data$dose)
+```
+
+The ToothGrowth dataset explains the relation between the growth of teeth of guinea pigs at each of three dose levels of Vitamin C (0.5, 1 and 2 mg) with each of two delivery methods(orange juice and ascorbic acid).
+
+## 3. Use confidence intervals and/or hypothesis tests to compare tooth growth by supp and dose.
+
+```{r}
+# T Test by supplemant type
+t.test(len ~ supp, data = ToothGrowth)
+# T test by dose level 
+Tooth.dose0.5_1.0 <- subset(ToothGrowth, dose %in% c(0.5, 1.0))
+Tooth.dose0.5_2.0 <- subset(ToothGrowth, dose %in% c(0.5, 2.0))
+Tooth.dose1.0_2.0 <- subset(ToothGrowth, dose %in% c(1.0, 2.0))
+t.test(len ~ dose, data = Tooth.dose0.5_1.0)
+t.test(len ~ dose, data = Tooth.dose0.5_2.0)
+t.test(len ~ dose, data = Tooth.dose1.0_2.0)
+# T test for supplement by dose level
+Tooth.dose0.5 <- subset(ToothGrowth, dose == 0.5)
+Tooth.dose1.0 <- subset(ToothGrowth, dose == 1.0)
+Tooth.dose2.0 <- subset(ToothGrowth, dose == 2.0)
+t.test(len ~ supp, data = Tooth.dose0.5)
+t.test(len ~ supp, data = Tooth.dose1.0)
+t.test(len ~ supp, data = Tooth.dose2.0)
+```
+
+## 4. State your conclusions and the assumptions needed for your conclusions. 
+
+The p.value indicators for doses of ```0.5``` and ```1.0``` are ```0.0064``` and ```0.001``` respectively, being less than 5% and the confidence intervals of the test do not contain 0.
+The p.value for the dose of ```2.0``` is ```0.064```, which is greater than 5% and the confidence test contains 0.
+Based of the results, we can say that for doses of ```0.5``` and ```1.0```, OJ has a greater effect on Tooth Growth than VC. For the test at ```dose == 2.0``` we cannot reject the Ho. 
+
+We can then conclude that to get greater tooth growth with low levels of dosage (0.5 & 1.0) one should use OJ instead of VC. At greater levels (2.0) of dosage it is uncertain whether there will be a greater effect from either OJ or VC.
